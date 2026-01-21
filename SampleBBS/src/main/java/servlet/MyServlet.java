@@ -28,10 +28,8 @@ public class MyServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		RequestDispatcher dispatcher = request.getRequestDispatcher("./WEB-INF/jsp/MyJSP.jsp");
+		RequestDispatcher dispatcher = request.getRequestDispatcher("./WEB-INF/jsp/myjsp.jsp");
 		dispatcher.forward(request, response);
-		response.getWriter().append("roppyyyyyyyyyy Served at: ").append(request.getContextPath());
 	}
 
 	/**
