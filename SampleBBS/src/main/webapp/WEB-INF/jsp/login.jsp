@@ -1,43 +1,83 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%
+  request.setCharacterEncoding("UTF-8");
+  response.setCharacterEncoding("UTF-8");
+%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Login page</title>
-<link rel="stylesheet" type="text/css"
-      href="<%= request.getContextPath() %>/css/style.css">
+<title>Login</title>
+
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
 </head>
-<body>
+<body style="
+  background: linear-gradient(120deg, #89f7fe, #66a6ff);
+  font-family: Arial, sans-serif;
+">
 
-<div id="form">
-  <p class="form-title">Tiny BBS ログインページ</p>
+<div style="
+  max-width: 420px;
+  margin: 80px auto;
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+">
 
-  <% if (request.getAttribute("loginError") != null) { %>
-    <p style="color:red;">
-      <%= request.getAttribute("loginError") %>
-    </p>
-  <% } %>
+  <h2 style="text-align:center; margin-bottom:30px;">
+    roppy ログイン
+  </h2>
 
   <form action="<%= request.getContextPath() %>/LoginServlet" method="post">
-    <p class="mail">
-      <label>ログインID：
-        <input type="text" name="id" size="30" maxlength="20">
-      </label>
-    </p>
-    <p class="pass">
-      <label>パスワード：
-        <input type="password" name="password" size="20" maxlength="20">
-      </label>
-    </p>
-    <p class="submit">
-      <input type="submit" value="ログイン">
-    </p>
+
+    <div style="margin-bottom:20px;">
+      <label>ログインID</label><br>
+      <input type="text" name="id" style="
+        width:100%;
+        padding:10px;
+        border-radius:6px;
+        border:1px solid #ccc;
+      ">
+    </div>
+
+    <div style="margin-bottom:30px;">
+      <label>パスワード</label><br>
+      <input type="password" name="password" style="
+        width:100%;
+        padding:10px;
+        border-radius:6px;
+        border:1px solid #ccc;
+      ">
+    </div>
+
+    <div style="text-align:center;">
+      <button type="submit" style="
+        background:#66a6ff;
+        color:#fff;
+        border:none;
+        padding:10px 30px;
+        border-radius:20px;
+        font-size:16px;
+        cursor:pointer;
+      ">
+        ログイン
+      </button>
+    </div>
+
   </form>
 
-  <a href="<%= request.getContextPath() %>/EntryUserPageServlet">
-    ユーザ登録
-  </a>
+  <div style="text-align:center; margin-top:20px;">
+    <a href="<%= request.getContextPath() %>/EntryUserPageServlet"
+       style="color:#66a6ff; text-decoration:none;">
+      ユーザ登録
+    </a>
+  </div>
+
 </div>
 
 </body>

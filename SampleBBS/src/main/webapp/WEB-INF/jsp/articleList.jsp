@@ -1,67 +1,154 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="java.util.*"%>
 <%@page import="java.text.SimpleDateFormat" %>
-<%@ page import ="beans.Article" %>
+<%@page import="beans.Article" %>
 
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Article list page</title>
+<title>Article list</title>
 </head>
-<body>
 
-<%
-    if (session.getAttribute("userId") != null) {
-%>
-    <div style="position: absolute; top: 10px; left: 10px;">
-        <form action="LogoutServlet" method="get">
-            <button type="submit">ログアウト</button>
-        </form>
-    </div>
-    <br><br>
-<%
-    }
-%>
+<body style="
+  background: linear-gradient(120deg, #89f7fe, #66a6ff);
+  font-family: Arial, 'Noto Sans JP', sans-serif;
+  margin:0;
+">
 
-<label>記事一覧</label><br><br>
-<form action="<%= request.getContextPath() %>/ArticleListServlet" method="get">
-  <input type="text" name="q" size="30" placeholder="検索（タイトル/本文/投稿者）"
-         value="<%= request.getParameter("q") == null ? "" : request.getParameter("q") %>">
-  <button type="submit">検索</button>
-  <a href="<%= request.getContextPath() %>/ArticleListServlet">クリア</a>
-</form>
-<br>
+<div style="
+  max-width: 900px;
+  margin: 50px auto;
+  background: #fff;
+  padding: 28px 34px;
+  border-radius: 14px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.15);
+">
 
+  <!-- 上部バー -->
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 18px;">
+    <div style="font-size: 22px; font-weight: 700;">roppy 記事一覧</div>
 
-<a href="./UpdateUserPageServletAns">ユーザ情報更新</a><br><br>
-<a href="./EntryArticlePageServlet">新規記事登録</a><br><br>
+    <%
+      String loginUserId = (String) session.getAttribute("userId");
+      if (loginUserId != null) {
+    %>
+      <form action="<%= request.getContextPath() %>/LogoutServlet" method="get" style="margin:0;">
+        <button type="submit" style="
+          background:#ffffff;
+          border:1px solid #cfd8e3;
+          padding:8px 14px;
+          border-radius: 18px;
+          cursor:pointer;
+          font-weight:700;
+        ">ログアウト</button>
+      </form>
+    <%
+      }
+    %>
+  </div>
 
-<%
-List<Article> aList = (List<Article>) request.getAttribute("articleList");
-if (aList != null) {
+  <!-- メニュー -->
+  <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom: 16px;">
+    <a href="<%= request.getContextPath() %>/UpdateUserPageServletAns"
+       style="
+         display:inline-block;
+         padding:10px 14px;
+         border-radius:10px;
+         border:1px solid #d6d6d6;
+         text-decoration:none;
+         color:#333;
+         font-weight:700;
+       ">ユーザ情報更新</a>
+
+    <a href="<%= request.getContextPath() %>/EntryArticlePageServlet"
+       style="
+         display:inline-block;
+         padding:10px 14px;
+         border-radius:10px;
+         background:#66a6ff;
+         color:#fff;
+         text-decoration:none;
+         font-weight:700;
+       ">新規記事登録</a>
+  </div>
+
+  <!-- 検索 -->
+  <form action="<%= request.getContextPath() %>/ArticleListServlet" method="get"
+        style="display:flex; gap:10px; align-items:center; margin: 10px 0 18px;">
+    <input type="text" name="q" placeholder="検索（タイトル/本文/投稿者）"
+           value="<%= request.getParameter("q")==null ? "" : request.getParameter("q") %>"
+           style="
+             flex:1;
+             padding:10px 12px;
+             border-radius:10px;
+             border:1px solid #ccc;
+             outline:none;
+           ">
+
+    <button type="submit" style="
+      background:#66a6ff;
+      color:#fff;
+      border:none;
+      padding:10px 18px;
+      border-radius: 18px;
+      cursor:pointer;
+      font-weight:700;
+    ">検索</button>
+
+    <a href="<%= request.getContextPath() %>/ArticleListServlet"
+       style="color:#66a6ff; font-weight:700; text-decoration:none;">
+      クリア
+    </a>
+  </form>
+
+  <hr style="border:none; border-top:1px solid #e6e6e6; margin: 18px 0;">
+
+  <!-- 記事一覧（カード表示） -->
+  <%
+    List<Article> aList = (List<Article>) request.getAttribute("articleList");
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    for (Article a : aList) {
-%>
-        <!-- タイトルを「詳細ページへのリンク」にする -->
-        <label>タイトル：<br>
-            <a href="<%= request.getContextPath() %>/ArticleDetailServlet?articleId=<%= a.getId() %>">
-    			<%= a.getTitle() %>
-			</a>
+    if (aList == null || aList.size() == 0) {
+  %>
+      <p style="color:#666;">記事がありません。</p>
+  <%
+    } else {
+      for (Article a : aList) {
+  %>
 
-        </label>
-        <br>
+    <div style="
+      border:1px solid #e6e6e6;
+      border-radius: 12px;
+      padding: 16px 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    ">
 
-        <label>本文：<br><%= a.getBody() %></label><br>
-        <label>登録者：<br><%= a.getEditorId() %></label><br>
-        <label>登録日時：<br><%= sdf.format(a.getEntryDatetime()) %></label>
-        <br><br>
-<%
+      <div style="font-size:18px; font-weight:800; margin-bottom: 8px;">
+        <a href="<%= request.getContextPath() %>/ArticleDetailServlet?articleId=<%= a.getId() %>"
+           style="color:#2563eb; text-decoration:none;">
+          <%= a.getTitle() %>
+        </a>
+      </div>
+
+      <div style="color:#555; margin-bottom: 10px; white-space:pre-wrap;">
+        <%= a.getBody() %>
+      </div>
+
+      <div style="display:flex; gap:14px; flex-wrap:wrap; color:#777; font-size:13px;">
+        <span>登録者：<b><%= a.getEditorId() %></b></span>
+        <span>登録日時：<%= sdf.format(a.getEntryDatetime()) %></span>
+      </div>
+
+    </div>
+
+  <%
+      }
     }
-}
-%>
+  %>
+
+</div>
 
 </body>
 </html>
