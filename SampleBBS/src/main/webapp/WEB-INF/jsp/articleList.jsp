@@ -26,6 +26,14 @@
 %>
 
 <label>記事一覧</label><br><br>
+<form action="<%= request.getContextPath() %>/ArticleListServlet" method="get">
+  <input type="text" name="q" size="30" placeholder="検索（タイトル/本文/投稿者）"
+         value="<%= request.getParameter("q") == null ? "" : request.getParameter("q") %>">
+  <button type="submit">検索</button>
+  <a href="<%= request.getContextPath() %>/ArticleListServlet">クリア</a>
+</form>
+<br>
+
 
 <a href="./UpdateUserPageServletAns">ユーザ情報更新</a><br><br>
 <a href="./EntryArticlePageServlet">新規記事登録</a><br><br>

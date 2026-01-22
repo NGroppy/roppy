@@ -29,18 +29,28 @@ public class ArticleListServlet extends HttpServlet {
 	}
 	
 	//GETアクセスされた場合に動作
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		//DBアクセスのためのクラスをインスタンス化
-		Dao dao = new Dao();
-		//すべての記事のリストを取得．Article(記事)クラスはbeansパッケージに宣言してある．
-		List<Article> articleList = dao.getArticleList();
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	        throws ServletException, IOException {
 
-		//requestに記事リストを格納．
-		request.setAttribute("articleList" , articleList);
+	    request.setCharacterEncoding("UTF-8");
 
-		//./WEB-INF/jsp/articleList.jspを表示
-		RequestDispatcher dispatcher = request.getRequestDispatcher("./WEB-INF/jsp/articleList.jsp");
-		dispatcher.forward(request, response);
+	    Dao dao = new Dao();
+
+	    String q = request.getParameter("q");
+	    List<Article> aList;
+
+	    if (q != null && !q.trim().isEmpty()) {
+	        aList = dao.searchArticleList(q.trim());
+	    } else {
+	        aList = dao.getArticleList();
+	    }
+
+	    request.setAttribute("articleList", aList);
+
+	    RequestDispatcher dispatcher =
+	        request.getRequestDispatcher("/WEB-INF/jsp/articleList.jsp");
+	    dispatcher.forward(request, response);
 	}
+
 
 }

@@ -12,9 +12,13 @@
 </head>
 <body>
 
+<%
+String loginUserId = (String) session.getAttribute("userId");
+%>
+
 <!-- ログアウト（ログイン中のみ） -->
 <%
-if (session.getAttribute("userId") != null) {
+if (loginUserId != null) {
 %>
   <div style="position: absolute; top: 10px; left: 10px;">
     <form action="<%= request.getContextPath() %>/LogoutServlet" method="get">
@@ -40,28 +44,26 @@ if (article == null) {
   <p>記事が見つかりませんでした。</p>
 <%
 } else {
+    boolean isOwner = (loginUserId != null && loginUserId.equals(article.getEditorId()));
 %>
+
   <h2><%= article.getTitle() %></h2>
   <p><%= article.getBody() %></p>
 
   <p>登録者：<%= article.getEditorId() %></p>
   <p>登録日時：<%= sdf.format(article.getEntryDatetime()) %></p>
 
-  <hr>
-  	<%
-	String loginUserId = (String) session.getAttribute("userId");
-	if (loginUserId != null && loginUserId.equals(article.getEditorId())) {
-	%>
-  <form action="<%= request.getContextPath() %>/DeleteArticleServlet" method="post"
-        onsubmit="return confirm('この記事を削除します。よろしいですか？');">
-    <input type="hidden" name="articleId" value="<%= article.getId() %>">
-    <button type="submit">この記事を削除</button>
-  </form>
-  <hr>
-	<%
-	}
-	%>
-  
+  <% if (isOwner) { %>
+    <a href="<%= request.getContextPath() %>/EditArticlePageServlet?articleId=<%= article.getId() %>">この記事を編集</a>
+    <br><br>
+
+    <form action="<%= request.getContextPath() %>/DeleteArticleServlet" method="post"
+          onsubmit="return confirm('この記事を削除します。よろしいですか？');">
+      <input type="hidden" name="articleId" value="<%= article.getId() %>">
+      <button type="submit">この記事を削除</button>
+    </form>
+    <hr>
+  <% } %>
 
   <h3>コメント</h3>
 
@@ -83,14 +85,10 @@ if (article == null) {
   %>
 
   <hr>
-
   <h3>コメントを書く</h3>
-  
-  
 
   <%
-  // 未ログインなら投稿させない（表示だけ変える）
-  if (session.getAttribute("userId") == null) {
+  if (loginUserId == null) {
   %>
     <p>コメント投稿にはログインが必要です。</p>
   <%
