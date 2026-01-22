@@ -48,6 +48,20 @@ if (article == null) {
   <p>登録日時：<%= sdf.format(article.getEntryDatetime()) %></p>
 
   <hr>
+  	<%
+	String loginUserId = (String) session.getAttribute("userId");
+	if (loginUserId != null && loginUserId.equals(article.getEditorId())) {
+	%>
+  <form action="<%= request.getContextPath() %>/DeleteArticleServlet" method="post"
+        onsubmit="return confirm('この記事を削除します。よろしいですか？');">
+    <input type="hidden" name="articleId" value="<%= article.getId() %>">
+    <button type="submit">この記事を削除</button>
+  </form>
+  <hr>
+	<%
+	}
+	%>
+  
 
   <h3>コメント</h3>
 
@@ -71,6 +85,8 @@ if (article == null) {
   <hr>
 
   <h3>コメントを書く</h3>
+  
+  
 
   <%
   // 未ログインなら投稿させない（表示だけ変える）
