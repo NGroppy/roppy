@@ -80,7 +80,7 @@ button:hover {
 <body>
 
 <div class="card">
-  <h2>Tiny BBS ユーザ登録</h2>
+  <h2>roppy ユーザ登録</h2>
 
   <form action="<%= request.getContextPath() %>/EntryUserServlet" method="post">
 
