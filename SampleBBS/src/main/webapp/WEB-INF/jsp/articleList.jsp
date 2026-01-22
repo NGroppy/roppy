@@ -16,6 +16,18 @@
 <title>Article list page</title>
 </head>
 <body>
+	<%
+    if (session.getAttribute("userId") != null) {
+	%>
+	<div style="position: absolute; top: 10px; left: 10px;">
+        <form action="LogoutServlet" method="get">
+            <button type="submit">ログアウト</button>
+        </form>
+    </div>
+    <br>
+	<%
+    }
+	%>
 	<label>記事一覧</label><br><br>
 	<!-- UpdateUserPageServletAnsにハイパーリンク．
 	ハイパーリンクによるアクセスは，GETアクセスとなり，サーブレットのdoGet()が呼ばれる． -->
