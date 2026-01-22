@@ -29,11 +29,15 @@
   <%
     Article article = (Article) request.getAttribute("article");
     List<Comment> commentList = (List<Comment>) request.getAttribute("commentList");
+    
+    // サーブレットからお気に入りフラグを受け取る
+    Boolean isFavObj = (Boolean) request.getAttribute("isFavorite");
+    boolean isFavorite = (isFavObj != null) ? isFavObj : false;
+    
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     String loginUserId = (String) session.getAttribute("userId");
   %>
 
-  <!-- 上部バー（戻る + ログアウト） -->
   <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom: 16px;">
     <a href="<%= request.getContextPath() %>/ArticleListServlet"
        style="color:#2563eb; text-decoration:none; font-weight:700;">
@@ -54,23 +58,12 @@
     <% } %>
   </div>
 
-  <%
-    if (article == null) {
-  %>
-      <div style="
-        border:1px solid #eee;
-        border-radius:12px;
-        padding:18px;
-        background:#fafafa;
-        color:#555;
-      ">
+  <% if (article == null) { %>
+      <div style="border:1px solid #eee; border-radius:12px; padding:18px; background:#fafafa; color:#555;">
         記事が見つかりませんでした。
       </div>
-  <%
-    } else {
-  %>
+  <% } else { %>
 
-  <!-- 記事本体カード -->
   <div style="
     border:1px solid #e6e6e6;
     border-radius: 12px;
@@ -78,147 +71,95 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.06);
     margin-bottom: 16px;
   ">
-    <div style="font-size: 24px; font-weight: 800; margin-bottom: 10px;">
+    <div style="font-size: 24px; font-weight: 800; margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
       <%= article.getTitle() %>
+      <% if (isFavorite) { %>
+        <span style="color: #ffca28; font-size: 28px; text-shadow: 0 0 5px rgba(255,202,40,0.3);">★</span>
+      <% } %>
     </div>
 
     <div style="color:#444; white-space:pre-wrap; line-height:1.6; margin-bottom: 14px;">
       <%= article.getBody() %>
     </div>
 
-    <div style="display:flex; gap:14px; flex-wrap:wrap; color:#777; font-size:13px;">
+    <div style="display:flex; gap:14px; flex-wrap:wrap; color:#777; font-size:13px; align-items: center;">
       <span>登録者：<b><%= article.getEditorId() %></b></span>
       <span>登録日時：<%= sdf.format(article.getEntryDatetime()) %></span>
     </div>
 
-    <!-- 編集/削除（投稿者のみ） -->
-    <%
-      if (loginUserId != null && loginUserId.equals(article.getEditorId())) {
-    %>
-      <div style="margin-top: 14px; display:flex; gap:10px; flex-wrap:wrap;">
+    <% if (loginUserId != null) { %>
+      <div style="margin-top: 14px;">
+        <form action="<%= request.getContextPath() %>/FavoriteServlet" method="post" style="margin:0;">
+          <input type="hidden" name="articleId" value="<%= article.getId() %>">
+          <input type="hidden" name="action" value="<%= isFavorite ? "remove" : "add" %>">
+          
+          <button type="submit" style="
+            background: <%= isFavorite ? "#fff" : "#ffca28" %>;
+            color: <%= isFavorite ? "#555" : "#fff" %>;
+            border: 1px solid #ffca28;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+          ">
+            <%= isFavorite ? "☆ お気に入り解除" : "★ お気に入りに追加" %>
+          </button>
+        </form>
+      </div>
+    <% } %>
+
+    <% if (loginUserId != null && loginUserId.equals(article.getEditorId())) { %>
+      <div style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed #eee; display:flex; gap:10px; flex-wrap:wrap;">
         <a href="<%= request.getContextPath() %>/EditArticlePageServlet?articleId=<%= article.getId() %>"
-           style="
-             display:inline-block;
-             padding:10px 14px;
-             border-radius:10px;
-             background:#66a6ff;
-             color:#fff;
-             text-decoration:none;
-             font-weight:700;
-           ">
+           style="display:inline-block; padding:10px 14px; border-radius:10px; background:#66a6ff; color:#fff; text-decoration:none; font-weight:700;">
           この記事を編集
         </a>
 
         <form action="<%= request.getContextPath() %>/DeleteArticleServlet" method="post"
-              onsubmit="return confirm('この記事を削除します。よろしいですか？');"
-              style="margin:0;">
+              onsubmit="return confirm('この記事を削除します。よろしいですか？');" style="margin:0;">
           <input type="hidden" name="articleId" value="<%= article.getId() %>">
-          <button type="submit" style="
-            background:#ff5b5b;
-            color:#fff;
-            border:none;
-            padding:10px 14px;
-            border-radius:10px;
-            cursor:pointer;
-            font-weight:700;
-          ">
+          <button type="submit" style="background:#ff5b5b; color:#fff; border:none; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:700;">
             この記事を削除
           </button>
         </form>
       </div>
-    <%
-      }
-    %>
+    <% } %>
   </div>
 
-  <!-- コメント一覧カード -->
-  <div style="
-    border:1px solid #e6e6e6;
-    border-radius:12px;
-    padding:18px;
-    margin-bottom:16px;
-  ">
+  <div style="border:1px solid #e6e6e6; border-radius:12px; padding:18px; margin-bottom:16px;">
     <div style="font-size:18px; font-weight:800; margin-bottom: 12px;">コメント</div>
-
-    <%
-      if (commentList == null || commentList.size() == 0) {
-    %>
+    <% if (commentList == null || commentList.isEmpty()) { %>
       <div style="color:#666;">コメントはまだありません。</div>
-    <%
-      } else {
-        for (Comment c : commentList) {
-    %>
-      <div style="
-        border:1px solid #eee;
-        border-radius:10px;
-        padding:12px;
-        margin-bottom:10px;
-        background:#fafafa;
-      ">
-        <div style="white-space:pre-wrap; color:#333; margin-bottom:6px;">
-          <%= c.getBody() %>
+    <% } else { %>
+      <% for (Comment c : commentList) { %>
+        <div style="border:1px solid #eee; border-radius:10px; padding:12px; margin-bottom:10px; background:#fafafa;">
+          <div style="white-space:pre-wrap; color:#333; margin-bottom:6px;"><%= c.getBody() %></div>
+          <div style="color:#777; font-size:12px;"><b><%= c.getUserId() %></b> ・ <%= sdf.format(c.getCreatedAt()) %></div>
         </div>
-        <div style="color:#777; font-size:12px;">
-          <b><%= c.getUserId() %></b> ・ <%= sdf.format(c.getCreatedAt()) %>
-        </div>
-      </div>
-    <%
-        }
-      }
-    %>
+      <% } %>
+    <% } %>
   </div>
 
-  <!-- コメント投稿カード -->
-  <div style="
-    border:1px solid #e6e6e6;
-    border-radius:12px;
-    padding:18px;
-  ">
+  <div style="border:1px solid #e6e6e6; border-radius:12px; padding:18px;">
     <div style="font-size:18px; font-weight:800; margin-bottom: 12px;">コメントを書く</div>
-
-    <%
-      if (loginUserId == null) {
-    %>
+    <% if (loginUserId == null) { %>
       <div style="color:#666;">コメント投稿にはログインが必要です。</div>
-    <%
-      } else {
-    %>
+    <% } else { %>
       <form action="<%= request.getContextPath() %>/AddCommentServlet" method="post">
         <input type="hidden" name="articleId" value="<%= article.getId() %>">
-
-        <textarea name="body" rows="4" required
-          style="
-            width:100%;
-            padding:10px 12px;
-            border-radius:10px;
-            border:1px solid #ccc;
-            outline:none;
-            resize:vertical;
-          "></textarea>
-
+        <textarea name="body" rows="4" required style="width:100%; box-sizing: border-box; padding:10px 12px; border-radius:10px; border:1px solid #ccc; outline:none; resize:vertical;"></textarea>
         <div style="margin-top:10px;">
-          <button type="submit" style="
-            background:#66a6ff;
-            color:#fff;
-            border:none;
-            padding:10px 18px;
-            border-radius:18px;
-            cursor:pointer;
-            font-weight:700;
-          ">
-            送信
-          </button>
+          <button type="submit" style="background:#66a6ff; color:#fff; border:none; padding:10px 18px; border-radius:18px; cursor:pointer; font-weight:700;">送信</button>
         </div>
       </form>
-    <%
-      } // login check end
-    %>
+    <% } %>
   </div>
 
-  <%
-    } // article null check end
-  %>
-
+  <% } %>
 </div>
 </body>
 </html>

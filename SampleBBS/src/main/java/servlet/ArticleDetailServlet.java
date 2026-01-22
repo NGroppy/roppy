@@ -27,14 +27,24 @@ public class ArticleDetailServlet extends HttpServlet {
             Dao dao = new Dao();
             CommentDao cDao = new CommentDao();
 
+            // 記事とコメントを取得
             Article article = dao.getArticleById(articleId);
             List<Comment> commentList = cDao.findByArticleId(articleId);
 
+            // --- お気に入り判定（必ずforwardの前に記述） ---
+            String userId = (String) request.getSession().getAttribute("userId");
+            boolean isFav = false;
+            if (userId != null) {
+                isFav = dao.isFavorite(userId, articleId);
+            }
+            
+            // JSPへ渡すデータをセット
             request.setAttribute("article", article);
             request.setAttribute("commentList", commentList);
+            request.setAttribute("isFavorite", isFav);
 
-            RequestDispatcher rd =
-                request.getRequestDispatcher("/WEB-INF/jsp/articleDetail.jsp");
+            // 最後に画面遷移
+            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/jsp/articleDetail.jsp");
             rd.forward(request, response);
 
         } catch (Exception e) {
@@ -42,44 +52,3 @@ public class ArticleDetailServlet extends HttpServlet {
         }
     }
 }
-//@WebServlet("/ArticleDetailServlet")
-//public class ArticleDetailServlet extends HttpServlet {
-//
-//    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
-//
-//        System.out.println("[Detail] START");
-//        System.out.println("[Detail] param articleId=" + request.getParameter("articleId"));
-//
-//        int articleId = Integer.parseInt(request.getParameter("articleId"));
-//
-//        try {
-//            System.out.println("[Detail] before Dao");
-//            Dao dao = new Dao();
-//
-//            System.out.println("[Detail] before getArticleById");
-//            Article article = dao.getArticleById(articleId);
-//            System.out.println("[Detail] after getArticleById");
-//
-//            System.out.println("[Detail] before CommentDao");
-//            CommentDao cDao = new CommentDao();
-//
-//            System.out.println("[Detail] before findByArticleId");
-//            List<Comment> commentList = cDao.findByArticleId(articleId);
-//            System.out.println("[Detail] after findByArticleId");
-//
-//            request.setAttribute("article", article);
-//            request.setAttribute("commentList", commentList);
-//
-//            System.out.println("[Detail] before forward");
-//            RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/jsp/articleDetail.jsp");
-//            rd.forward(request, response);
-//            System.out.println("[Detail] after forward");
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            throw new ServletException(e);
-//        }
-//    }
-//}
-

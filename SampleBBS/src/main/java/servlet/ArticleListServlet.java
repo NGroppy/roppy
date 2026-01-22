@@ -1,6 +1,7 @@
 package servlet;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -13,44 +14,48 @@ import javax.servlet.http.HttpServletResponse;
 import beans.Article;
 import dao.Dao;
 
-//SampleBBS/ArticleListServletにアクセスすると，このサーブレットが動作
 @WebServlet("/ArticleListServlet")
 public class ArticleListServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	//コンストラクタ（省略可能）
     public ArticleListServlet() {
         super();
     }
 
-    //POSTアクセスされた場合は，doGetに丸投げ
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request,response);
-	}
-	
-	//GETアクセスされた場合に動作
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-	        throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
+    }
 
-	    request.setCharacterEncoding("UTF-8");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-	    Dao dao = new Dao();
+        request.setCharacterEncoding("UTF-8");
 
-	    String q = request.getParameter("q");
-	    List<Article> aList;
+        Dao dao = new Dao();
 
-	    if (q != null && !q.trim().isEmpty()) {
-	        aList = dao.searchArticleList(q.trim());
-	    } else {
-	        aList = dao.getArticleList();
-	    }
+        // 検索クエリの処理
+        String q = request.getParameter("q");
+        List<Article> aList;
 
-	    request.setAttribute("articleList", aList);
+        if (q != null && !q.trim().isEmpty()) {
+            aList = dao.searchArticleList(q.trim());
+        } else {
+            aList = dao.getArticleList();
+        }
 
-	    RequestDispatcher dispatcher =
-	        request.getRequestDispatcher("/WEB-INF/jsp/articleList.jsp");
-	    dispatcher.forward(request, response);
-	}
+        // --- お気に入りIDリストの取得処理を追加 ---
+        String userId = (String) request.getSession().getAttribute("userId");
+        List<Integer> favIds = new ArrayList<Integer>();
+        if (userId != null) {
+            favIds = dao.getFavoriteArticleIds(userId);
+        }
 
+        // JSPへ渡すデータをセット
+        request.setAttribute("articleList", aList);
+        request.setAttribute("favIds", favIds); // 追加
 
+        RequestDispatcher dispatcher =
+            request.getRequestDispatcher("/WEB-INF/jsp/articleList.jsp");
+        dispatcher.forward(request, response);
+    }
 }

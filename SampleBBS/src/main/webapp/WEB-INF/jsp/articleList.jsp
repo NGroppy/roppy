@@ -25,7 +25,6 @@
   box-shadow: 0 10px 28px rgba(0,0,0,0.15);
 ">
 
-  <!-- 上部バー -->
   <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 18px;">
     <div style="font-size: 22px; font-weight: 700;">roppy 記事一覧</div>
 
@@ -48,7 +47,6 @@
     %>
   </div>
 
-  <!-- メニュー -->
   <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom: 16px;">
     <a href="<%= request.getContextPath() %>/UpdateUserPageServletAns"
        style="
@@ -73,7 +71,6 @@
        ">新規記事登録</a>
   </div>
 
-  <!-- 検索 -->
   <form action="<%= request.getContextPath() %>/ArticleListServlet" method="get"
         style="display:flex; gap:10px; align-items:center; margin: 10px 0 18px;">
     <input type="text" name="q" placeholder="検索（タイトル/本文/投稿者）"
@@ -104,9 +101,11 @@
 
   <hr style="border:none; border-top:1px solid #e6e6e6; margin: 18px 0;">
 
-  <!-- 記事一覧（カード表示） -->
   <%
     List<Article> aList = (List<Article>) request.getAttribute("articleList");
+    List<Integer> favIds = (List<Integer>) request.getAttribute("favIds"); // 追加
+    if (favIds == null) favIds = new ArrayList<Integer>(); // 安全策
+
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     if (aList == null || aList.size() == 0) {
@@ -125,11 +124,16 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     ">
 
-      <div style="font-size:18px; font-weight:800; margin-bottom: 8px;">
+      <div style="font-size:18px; font-weight:800; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
         <a href="<%= request.getContextPath() %>/ArticleDetailServlet?articleId=<%= a.getId() %>"
            style="color:#2563eb; text-decoration:none;">
           <%= a.getTitle() %>
         </a>
+        
+        <%-- お気に入り判定：IDリストに含まれていれば星を表示 --%>
+        <% if (favIds.contains(a.getId())) { %>
+          <span style="color: #ffca28; font-size: 20px;">★</span>
+        <% } %>
       </div>
 
       <div style="color:#555; margin-bottom: 10px; white-space:pre-wrap;">
