@@ -93,7 +93,7 @@
              color:#fff;
              text-decoration:none;
              font-weight:700;
-           ">★ いいね一覧</a>
+           ">★ お気に入り一覧</a>
       <% } %>
     <% } %>
   </div>
@@ -130,7 +130,7 @@
 
   <div style="font-size: 18px; font-weight: 700; margin-bottom: 15px; color: #444; display: flex; align-items: center; gap: 5px;">
     <% if ("fav".equals(request.getAttribute("mode"))) { %>
-       <span style="color: #ffca28;">★</span> いいね登録済みの記事
+       <span style="color: #ffca28;">★</span> お気に入り登録済みの記事
     <% } else { %>
        新着記事一覧
     <% } %>
