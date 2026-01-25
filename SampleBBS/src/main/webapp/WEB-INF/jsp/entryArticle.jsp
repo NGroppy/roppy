@@ -63,17 +63,14 @@
     </div>
   <% } else { %>
 
+  <!-- ★ action はあなたの登録サーブレットに合わせて調整 -->
+  <!-- 例：EntryArticleServlet / EntryArticleServletAns など -->
   <form action="<%= request.getContextPath() %>/EntryArticleServlet" method="post">
-
-    <div style="margin-bottom:16px;">
-      <label style="font-weight:700;">タイトル</label><br>
-
-      <input type="text"
-             id="title"
-             name="title"
-             required
-             maxlength="50"
-             oninput="updateCounts()"
+  
+  	<div style="margin-bottom:16px;">
+  			<p><label>数字を入力してください(0～100)　そのグループにしか閲覧されない</label></p>
+  	
+      <input type="number" name="number" min ="0" max="100" step="1" required
              style="
                width:100%;
                padding:10px 12px;
@@ -81,21 +78,23 @@
                border:1px solid #ccc;
                outline:none;
              ">
+    </div>
 
-      <div id="titleCount" style="margin-top:6px; font-size:12px; color:#555;">
-        0 / 50 文字
-      </div>
+    <div style="margin-bottom:16px;">
+      <label style="font-weight:700;">タイトル</label><br>
+      <input type="text" name="title" required
+             style="
+               width:100%;
+               padding:10px 12px;
+               border-radius:10px;
+               border:1px solid #ccc;
+               outline:none;
+             ">
     </div>
 
     <div style="margin-bottom:22px;">
       <label style="font-weight:700;">本文</label><br>
-
-      <textarea id="body"
-                name="body"
-                rows="8"
-                required
-                maxlength="200"
-                oninput="updateCounts()"
+      <textarea name="body" rows="8" required
         style="
           width:100%;
           padding:10px 12px;
@@ -104,33 +103,10 @@
           outline:none;
           resize:vertical;
         "></textarea>
-
-      <!-- 残り文字数（①） -->
-      <div id="remainCount"
-           style="margin-top:6px; font-size:13px; font-weight:700; color:#555;">
-        あと 200 文字
-      </div>
-
-      <!-- プログレスバー（⑤） -->
-      <div style="
-        margin-top:8px;
-        height:8px;
-        background:#eee;
-        border-radius:4px;
-        overflow:hidden;
-      ">
-        <div id="progressBar"
-             style="
-               height:100%;
-               width:0%;
-               background:#66a6ff;
-               transition: width 0.2s;
-             "></div>
-      </div>
     </div>
 
     <div style="text-align:center;">
-      <button type="submit" id="submitBtn" style="
+      <button type="submit" style="
         background:#66a6ff;
         color:#fff;
         border:none;
@@ -143,51 +119,6 @@
     </div>
 
   </form>
-
-  <script>
-  function updateCounts() {
-    const title = document.getElementById("title");
-    const body  = document.getElementById("body");
-
-    const titleCount = document.getElementById("titleCount");
-    const remainView = document.getElementById("remainCount");
-    const bar        = document.getElementById("progressBar");
-    const btn        = document.getElementById("submitBtn");
-
-    const tLen = title.value.length;
-    const bLen = body.value.length;
-
-    // タイトル文字数
-    titleCount.textContent = tLen + " / " + title.maxLength + " 文字";
-    titleCount.style.color = (tLen >= title.maxLength) ? "red" : "#555";
-
-    // 残り文字数（①）
-    const remain = body.maxLength - bLen;
-    remainView.textContent = "あと " + remain + " 文字";
-
-    // プログレス（⑤）※100%を超えないように
-    const percent = Math.min((bLen / body.maxLength) * 100, 100);
-    bar.style.width = percent + "%";
-
-    // 色変化（分かりやすさUP）
-    if (percent >= 100) {
-      bar.style.background = "#ef4444";   // 赤
-      remainView.style.color = "red";
-    } else if (percent >= 80) {
-      bar.style.background = "#f59e0b";   // オレンジ
-      remainView.style.color = "#f59e0b";
-    } else {
-      bar.style.background = "#66a6ff";   // 青
-      remainView.style.color = "#555";
-    }
-
-    // 空欄防止（任意）
-    btn.disabled = (title.value.trim() === "" || body.value.trim() === "");
-  }
-
-  // 初期表示を整える
-  window.addEventListener("DOMContentLoaded", updateCounts);
-  </script>
 
   <% } %>
 
