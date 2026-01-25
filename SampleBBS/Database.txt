@@ -1,4 +1,4 @@
-#ルートユーザでmysqlにログイン
+#ルートユーザでmysqlにログイン*
 mariadb -u root -p (または，mysql -u root -p)
 パスワード：dbroot
 
@@ -106,3 +106,4 @@ drop table mydata;
 alter table mydata add data2 text null after data;
 
 >>>>>>> branch 'main' of https://github.com/NGroppy/roppy.git
+
