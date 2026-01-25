@@ -69,18 +69,33 @@
          text-decoration:none;
          font-weight:700;
        ">新規記事登録</a>
-       
-    <a href="<%= request.getContextPath() %>/GroupSelectServlet"
-       style="
-         display:inline-block;
-         padding:10px 14px;
-         border-radius:10px;
-         background:#66a6ff;
-         color:#fff;
-         text-decoration:none;
-         font-weight:700;
-       ">グループで絞り込み閲覧</a>
-       
+
+    <% if (loginUserId != null) { %>
+      <% if ("fav".equals(request.getAttribute("mode"))) { %>
+        <a href="<%= request.getContextPath() %>/ArticleListServlet"
+           style="
+             display:inline-block;
+             padding:10px 14px;
+             border-radius:10px;
+             background:#fff;
+             border:1px solid #ffca28;
+             color:#ffca28;
+             text-decoration:none;
+             font-weight:700;
+           ">← 全ての記事を表示</a>
+      <% } else { %>
+        <a href="<%= request.getContextPath() %>/ArticleListServlet?mode=fav"
+           style="
+             display:inline-block;
+             padding:10px 14px;
+             border-radius:10px;
+             background:#ffca28;
+             color:#fff;
+             text-decoration:none;
+             font-weight:700;
+           ">★ お気に入り一覧</a>
+      <% } %>
+    <% } %>
   </div>
 
   <form action="<%= request.getContextPath() %>/ArticleListServlet" method="get"
@@ -113,16 +128,24 @@
 
   <hr style="border:none; border-top:1px solid #e6e6e6; margin: 18px 0;">
 
+  <div style="font-size: 18px; font-weight: 700; margin-bottom: 15px; color: #444; display: flex; align-items: center; gap: 5px;">
+    <% if ("fav".equals(request.getAttribute("mode"))) { %>
+       <span style="color: #ffca28;">★</span> お気に入り登録済みの記事
+    <% } else { %>
+       新着記事一覧
+    <% } %>
+  </div>
+
   <%
     List<Article> aList = (List<Article>) request.getAttribute("articleList");
-    List<Integer> favIds = (List<Integer>) request.getAttribute("favIds"); // 追加
-    if (favIds == null) favIds = new ArrayList<Integer>(); // 安全策
+    List<Integer> favIds = (List<Integer>) request.getAttribute("favIds"); 
+    if (favIds == null) favIds = new ArrayList<Integer>(); 
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     if (aList == null || aList.size() == 0) {
   %>
-      <p style="color:#666;">記事がありません。</p>
+      <p style="color:#666;">表示する記事がありません。</p>
   <%
     } else {
       for (Article a : aList) {
@@ -134,6 +157,7 @@
       padding: 16px 16px;
       margin-bottom: 14px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      background: #fff;
     ">
 
       <div style="font-size:18px; font-weight:800; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
@@ -142,7 +166,7 @@
           <%= a.getTitle() %>
         </a>
         
-        <%-- お気に入り判定：IDリストに含まれていれば星を表示 --%>
+        <%-- お気に入りスター（金色に修正） --%>
         <% if (favIds.contains(a.getId())) { %>
           <span style="color: #ffca28; font-size: 20px;">★</span>
         <% } %>

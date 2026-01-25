@@ -10,25 +10,23 @@ public class Article implements Serializable{ //implements Serializableが必要
 	private String body; //本文
 	private String editorId; //著者のユーザId
 	private Timestamp entryDatetime; //登録日時
-	private int group_num; //グループ番号
 
 	//カラのコンストラクタが必要
 	public Article() {
 	}
 
-	public Article(int id, String title, String body, String editorId, Timestamp entryDatetime, int groupNum) {
+	public Article(int id, String title, String body, String editorId, Timestamp entryDatetime) {
 		super();
 		this.id = id;
 		this.title = title;
 		this.body = body;
 		this.editorId = editorId;
 		this.entryDatetime = entryDatetime;
-		this.group_num = groupNum;
 	}
 
 	//idと登録日時が確定していない場合用のコンストラクタ
-	public Article(String title, String body, String editorId, int groupNum) {
-		this(-1, title, body, editorId, null, groupNum);
+	public Article(String title, String body, String editorId) {
+		this(-1, title, body, editorId, null);
 	}
 
 	public int getId() {
@@ -69,14 +67,6 @@ public class Article implements Serializable{ //implements Serializableが必要
 
 	public void setEntryDatetime(Timestamp entryDatetime) {
 		this.entryDatetime = entryDatetime;
-	}
-	
-	public int getGroupNum() {
-		return group_num;
-	}
-	
-	public void setGroupNum(int groupNum) {
-		this.group_num = groupNum;
 	}
 
 }

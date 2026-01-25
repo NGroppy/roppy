@@ -30,32 +30,38 @@ public class ArticleListServlet extends HttpServlet {
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
-
         Dao dao = new Dao();
 
-        // 検索クエリの処理
         String q = request.getParameter("q");
+        String mode = request.getParameter("mode"); 
+        //「お気に入り表示」かどうかの判定用
+        String userId = (String) request.getSession().getAttribute("userId");
+
         List<Article> aList;
 
-        if (q != null && !q.trim().isEmpty()) {
+        //表示するリストの判定
+        if ("fav".equals(mode) && userId != null) {
+            //お気に入り一覧モード
+            aList = dao.getFavoriteArticles(userId);
+        } else if (q != null && !q.trim().isEmpty()) {
+            //検索モード
             aList = dao.searchArticleList(q.trim());
         } else {
+            //通常の全件表示モード
             aList = dao.getArticleList();
         }
 
-        // --- お気に入りIDリストの取得処理を追加 ---
-        String userId = (String) request.getSession().getAttribute("userId");
-        List<Integer> favIds = new ArrayList<Integer>();
+        //お気に入り星マーク判定用のIDリスト取得
+        List<Integer> favIds = new ArrayList<>();
         if (userId != null) {
             favIds = dao.getFavoriteArticleIds(userId);
         }
 
-        // JSPへ渡すデータをセット
         request.setAttribute("articleList", aList);
-        request.setAttribute("favIds", favIds); // 追加
+        request.setAttribute("favIds", favIds);
+        request.setAttribute("mode", mode); // 今どのモードかJSPに伝える
 
-        RequestDispatcher dispatcher =
-            request.getRequestDispatcher("/WEB-INF/jsp/articleList.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/articleList.jsp");
         dispatcher.forward(request, response);
     }
 }

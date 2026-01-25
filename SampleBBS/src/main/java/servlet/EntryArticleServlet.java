@@ -29,7 +29,6 @@ public class EntryArticleServlet extends HttpServlet {
 		//requestから，title, bodyの値を取得
 		String title = request.getParameter("title");
 		String body = request.getParameter("body");
-		int number = Integer.parseInt(request.getParameter("number"));
 		
 		//request.getSession()でsessionを取得し，getAttribute("userId")でuserIdという名前の値を取得.
 		//ログイン時に設定した自分のuserIdが取れる．
@@ -40,7 +39,7 @@ public class EntryArticleServlet extends HttpServlet {
 		Dao dao = new Dao();
 
 		//入力データから記事オブジェクトを作成
-		Article articleToEntry = new Article(title, body, editorId, number);
+		Article articleToEntry = new Article(title, body, editorId);
 		
 		//記事をDBに登録
 		dao.insertArticle(articleToEntry);
