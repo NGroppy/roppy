@@ -1,6 +1,7 @@
-#ルートユーザでmysqlにログイン*
+#ルートユーザでmysqlにログイン
 mariadb -u root -p (または，mysql -u root -p)
 パスワード：dbroot
+
 
 #データベース作成
 create database samplebbs;
