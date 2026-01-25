@@ -64,6 +64,19 @@
   <% } else { %>
 
   <form action="<%= request.getContextPath() %>/EntryArticleServlet" method="post">
+  
+  <div style="margin-bottom:16px;">
+  			<p><label>数字を入力してください(0～100)　そのグループにしか閲覧されない</label></p>
+  	
+      <input type="number" name="number" min ="0" max="100" step="1" required
+             style="
+               width:100%;
+               padding:10px 12px;
+               border-radius:10px;
+               border:1px solid #ccc;
+               outline:none;
+             ">
+    </div>
 
     <div style="margin-bottom:16px;">
       <label style="font-weight:700;">タイトル</label><br>

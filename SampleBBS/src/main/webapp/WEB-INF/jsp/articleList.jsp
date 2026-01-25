@@ -69,6 +69,17 @@
          text-decoration:none;
          font-weight:700;
        ">新規記事登録</a>
+       
+       <a href="<%= request.getContextPath() %>/GroupSelectServlet"
+       style="
+         display:inline-block;
+         padding:10px 14px;
+         border-radius:10px;
+         background:#66a6ff;
+         color:#fff;
+         text-decoration:none;
+         font-weight:700;
+       ">グループ絞り込み</a>
 
     <% if (loginUserId != null) { %>
       <% if ("fav".equals(request.getAttribute("mode"))) { %>
@@ -96,6 +107,8 @@
            ">★ お気に入り一覧</a>
       <% } %>
     <% } %>
+    
+    
   </div>
 
   <form action="<%= request.getContextPath() %>/ArticleListServlet" method="get"
