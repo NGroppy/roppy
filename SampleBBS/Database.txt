@@ -73,38 +73,3 @@ mysqldump --default-character-set=utf8 -u root -p samplebbs>samplebbs_dump.sql
 mysql -u root -p samplebbs<samplebbs_dump.sql
 パスワード入力 (rootのパスワード)
 samplebbsの内容がdumpファイルから復元される
-
-<<<<<<< HEAD
-
-
-
-#自作部分
-#テーブル作成
-create table mydata(
-id int primary key auto_increment,
-data text not null,
-entry_datetime datetime not null
-);
-
-#テーブルの削除
-drop table mydata(テーブル名 )
-
-#カラムの追加
-alter table mydata add data2 text not null after data;
-=======
-#自作部分
-#テーブル作成
-create table mydata(
-id int primary key auto_increment,
-data text not null,
-entry_datetime datetime not null
-);
-
-#テーブル削除
-drop table mydata;
-
-#カラムの追加
-alter table mydata add data2 text null after data;
-
->>>>>>> branch 'main' of https://github.com/NGroppy/roppy.git
-
